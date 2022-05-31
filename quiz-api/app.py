@@ -1,6 +1,7 @@
 from asyncio.windows_events import NULL
 from flask import Flask, request 
 from jwt_utils import *
+from questions import *
 app = Flask(__name__)
 
 @app.route('/')
@@ -10,7 +11,7 @@ def hello_world():
 
 @app.route('/quiz-info', methods=['GET'])
 def GetQuizInfo():
-	return {"size": 0, "scores": []}, 200
+	return {"size": sizeDB(), "scores": []}, 200
    
 @app.route('/login',  methods=['POST'])
 def Login(): 
@@ -27,6 +28,9 @@ def AddQuestion():
     if type(authorization) is not str:
         return '', 401
     else:
+        quest=request.get_json()
+        q=fromjson(quest)
+        q.addtodb()
         return '', 200
 
 @app.route('/questions/<int:position>',  methods=['DELETE'])
@@ -35,15 +39,14 @@ def DeleteQuestion(position):
     if type(authorization) is not str:
         return '', 401
     else:
-        return '', 200
+        return '', deletefromdb(position)
 
 @app.route('/questions/<int:position>',  methods=['GET'])
 def GetQuestion(position):
-    authorization = request.headers.get('Authorization')
-    if type(authorization) is not str:
-        return '', 401
-    else:
-        return '', 200
+    getQ=getquest(position)
+    if getQ==404:
+        return '',404
+    return getQ,200
 
 @app.route('/questions/<int:position>',  methods=['PUT'])
 def UpdateQuestion(position):
@@ -51,7 +54,9 @@ def UpdateQuestion(position):
     if type(authorization) is not str:
         return '', 401
     else:
-        return '', 200
+        quest=request.get_json()
+        q=fromjson(quest)
+        return '', updatedb(position,q)
 
 
 if __name__ == "__main__":
