@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from flask import Flask, request 
 from jwt_utils import *
 app = Flask(__name__)
@@ -19,6 +20,39 @@ def Login():
         return {'token' : token}, 200
     else :
         return '', 401
+
+@app.route('/questions',  methods=['POST'])
+def AddQuestion():
+    authorization = request.headers.get('Authorization')
+    if type(authorization) is not str:
+        return '', 401
+    else:
+        return '', 200
+
+@app.route('/questions/<int:position>',  methods=['DELETE'])
+def DeleteQuestion(position):
+    authorization = request.headers.get('Authorization')
+    if type(authorization) is not str:
+        return '', 401
+    else:
+        return '', 200
+
+@app.route('/questions/<int:position>',  methods=['GET'])
+def GetQuestion(position):
+    authorization = request.headers.get('Authorization')
+    if type(authorization) is not str:
+        return '', 401
+    else:
+        return '', 200
+
+@app.route('/questions/<int:position>',  methods=['PUT'])
+def UpdateQuestion(position):
+    authorization = request.headers.get('Authorization')
+    if type(authorization) is not str:
+        return '', 401
+    else:
+        return '', 200
+
 
 if __name__ == "__main__":
     app.run(ssl_context='adhoc')
