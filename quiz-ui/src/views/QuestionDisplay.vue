@@ -1,5 +1,9 @@
 <template>
-  <p> {{ question.currentquestion.questionTitle }}
+  <p> {{ question.questionTitle }}
+    <br>
+    <br>
+    <br>
+    <br>
     <br>
     <br>
     <button type="button" @click="launchNewQuiz">Suivant</button>
@@ -7,7 +11,7 @@
 
 </template>
 <script>
-import QuestionManagerVue from './QuestionManager.vue'
+//import QuestionManagerVue from './QuestionManager.vue'
 export default {
   props: {
     question: {
