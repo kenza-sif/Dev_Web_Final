@@ -1,6 +1,7 @@
 from asyncio.windows_events import NULL
 from flask import Flask, request 
 from jwt_utils import *
+from participation import *
 from questions import *
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ def hello_world():
 
 @app.route('/quiz-info', methods=['GET'])
 def GetQuizInfo():
-	return {"size": sizeDB(), "scores": []}, 200
+	return {"size": sizeDB(), "scores": allScores()}, 200
    
 @app.route('/login',  methods=['POST'])
 def Login(): 
@@ -33,6 +34,15 @@ def AddQuestion():
         q.addtodb()
         return '', 200
 
+@app.route('/participations',  methods=['POST'])
+def AddParticipation():
+        part=request.get_json()
+        p=createParticipation(part)
+        res = p.calculateScore()
+        if(res == 400):
+            return '',400           
+        return res, 200
+
 @app.route('/questions/<int:position>',  methods=['DELETE'])
 def DeleteQuestion(position):
     authorization = request.headers.get('Authorization')
@@ -40,6 +50,22 @@ def DeleteQuestion(position):
         return '', 401
     else:
         return '', deletefromdb(position)
+
+@app.route('/questions/clear',  methods=['DELETE'])
+def ClearDatabase():
+    authorization = request.headers.get('Authorization')
+    if type(authorization) is not str:
+        return '', 401
+    else:
+        return '',cleardb()
+
+@app.route('/participations',  methods=['DELETE'])
+def ClearParticipations():
+    authorization = request.headers.get('Authorization')
+    if type(authorization) is not str:
+        return '', 401
+    else:
+        return '',clearparticipations()
 
 @app.route('/questions/<int:position>',  methods=['GET'])
 def GetQuestion(position):
