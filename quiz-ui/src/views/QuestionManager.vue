@@ -9,7 +9,8 @@ export default {
       currentQuestion: {
         questionTitle: '',
         questionText: '',
-        possibleAnswers: []
+        possibleAnswers: [],
+        image: ''
       },
       currentQuestionPosition: 1
     };
@@ -29,6 +30,7 @@ export default {
         this.currentQuestion.questionText = q1.data.text,
         this.currentQuestion.possibleAnswers = q1.data.possibleAnswers,
         this.currentQuestion.currentQuestionPosition = q1.data.position
+      this.currentQuestion.image = q1.data.image
     },
     async answerClickHandler() {
       loadQuestionByPosition();
@@ -46,7 +48,7 @@ export default {
  
 
  <template>
-  <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
+  <h1>Question {{ currentQuestionPosition }} / {{ 10 }}</h1>
   <QuestionDisplay :question="currentQuestion" @click-on-answer="answerClickedHandler" />
 </template>
  
