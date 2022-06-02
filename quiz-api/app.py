@@ -3,7 +3,9 @@ from flask import Flask, request
 from jwt_utils import *
 from participation import *
 from questions import *
+from flask_cors import CORS 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
@@ -86,7 +88,7 @@ def UpdateQuestion(position):
 
 
 if __name__ == "__main__":
-    app.run(ssl_context='adhoc')
+    app.run()
 
 
 
