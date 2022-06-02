@@ -2,13 +2,15 @@
 import quizApiService from "@/services/QuizApiService";
 import participationStorageService from "@/services/ParticipationStorageService";
 import QuestionDisplay from "./QuestionDisplay.vue";
+var currentQuestionPosition;
 export default {
   data() {
     return {
       currentQuestion: {
         questionTitle: '',
         questionText: '',
-        possibleAnswers: []
+        possibleAnswers: [],
+        image: ''
       },
       currentQuestionPosition: 1
     };
@@ -18,16 +20,17 @@ export default {
   },
   async created() {
     currentQuestionPosition = 0;
-    loadQuestionByPosition();
+    await this.loadQuestionByPosition();
 
   },
   methods: {
     async loadQuestionByPosition() {
-      const q1 = await quizApiService.GetQuestion(currentQuestionPosition + 1);
-      this.questionTitle = q1.data.title,
-        this.questionText = q1.data.text,
-        this.possibleAnswers = q1.data.possibleAnswers,
-        this.currentQuestionPosition = q1.data.position
+      const q1 = await quizApiService.getQuestion(currentQuestionPosition + 1);
+      this.currentQuestion.questionTitle = q1.data.title,
+        this.currentQuestion.questionText = q1.data.text,
+        this.currentQuestion.possibleAnswers = q1.data.possibleAnswers,
+        this.currentQuestion.currentQuestionPosition = q1.data.position
+      this.currentQuestion.image = q1.data.image
     },
     async answerClickHandler() {
       loadQuestionByPosition();
@@ -45,7 +48,7 @@ export default {
  
 
  <template>
-  <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
+  <h1>Question {{ currentQuestionPosition }} / {{ 10 }}</h1>
   <QuestionDisplay :question="currentQuestion" @click-on-answer="answerClickedHandler" />
 </template>
  
