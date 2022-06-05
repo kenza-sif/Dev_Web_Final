@@ -47,17 +47,17 @@ export default {
 </script>
  
 
- <template>
-  <h1>Question {{ currentQuestionPosition }} / {{ 10 }}</h1>
+<template>
+  <br><br><br>
+  <h2 class="question_number">Question {{ currentQuestionPosition }} / {{ 10 }}</h2>
   <QuestionDisplay :question="currentQuestion" @click-on-answer="answerClickedHandler" />
 </template>
  
- <style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+ 
+<style>
+.question_number{
+  height: 100%;
+  width: 100%;
+  margin: 1rem 0rem 0rem 2rem;
 }
 </style>
