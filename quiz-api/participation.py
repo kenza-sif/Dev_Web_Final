@@ -24,26 +24,36 @@ class Participation:
         if (row[0]!=len(self.answers)):
             return 400
         self.score=0
-        for i in range(0,row[0]):
-            cur.execute("Select * from Question where Position="+str(i+1))
-            question=cur.fetchone()
-            cur.execute("Select Position from PossibleAnswers where QuestionID="+str(question[0])+" and isCorrect=\"True\"")
-            correct=cur.fetchone()
-            if(correct[0]==self.answers[i]):
-                self.score+=1
-        listP=[self.name,self.score]
-        insertion=cur.execute("insert into Participations(Name,Score) values(?,?)",listP)
-        cur.execute("commit")   
-        return self.getResult()
+        try:
+            for i in range(0,row[0]):
+                cur.execute("Select * from Question where Position="+str(i+1))
+                question=cur.fetchone()
+                cur.execute("Select Position from PossibleAnswers where QuestionID="+str(question[0])+" and isCorrect=\"True\"")
+                correct=cur.fetchone()
+                if(correct[0]==self.answers[i]):
+                    self.score+=1
+            listP=[self.name,self.score]
+            insertion=cur.execute("insert into Participations(Name,Score) values(?,?)",listP)
+            cur.execute("commit")   
+            return self.getResult()
+        except:
+            cur.rollback()
+        db_connection.close()
+        return 500
 
 def clearparticipations():
     db_connection = sqlite3.connect("DBQuiz.db")
     db_connection.isolation_level = None
-    cur = db_connection.cursor()
-    cur.execute("begin")
-    cur.execute("Delete from Participations")
-    cur.execute("commit")
-    return 204
+    try:
+        cur = db_connection.cursor()
+        cur.execute("begin")
+        cur.execute("Delete from Participations")
+        cur.execute("commit")
+        return 204
+    except:
+        cur.rollback()
+    db_connection.close()
+    return 500
 
 
 def createParticipation(dictjson):

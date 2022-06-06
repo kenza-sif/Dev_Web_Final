@@ -21,46 +21,54 @@ class Question:
     def addtodb(q):
         db_connection = sqlite3.connect("DBQuiz.db")
         db_connection.isolation_level = None
-        cur = db_connection.cursor()
-        cur.execute("begin")
-        cur.execute("Select * from Question ORDER BY Position")
-        records= cur.fetchall()
-        if(q.position<=len(records)+1):
-            listq=[q.title,q.text,q.position,q.img]
-            for j in range(len(records),q.position-1,-1):
-                cur.execute("Update Question set Position=" +str(j+1)+ " where Position="+str(j))
-            insertion=cur.execute("insert into Question(Title,Description,Position,Image) values(?,?,?,?)",listq)
-            cur.execute("Select * from Question where Position="+str(q.position))
-            row=cur.fetchone()
-            for i in range(0,len(q.ans)):
-                
-                lista=[row[0],q.ans[i]["text"],str(q.ans[i]["isCorrect"]),i+1]
-                insertion=cur.execute("insert into PossibleAnswers(QuestionID,text,isCorrect,Position) values(?,?,?,?)",lista)
-            cur.execute("commit")
+        try:
+            cur = db_connection.cursor()
+            cur.execute("begin")
+            cur.execute("Select * from Question ORDER BY Position")
+            records= cur.fetchall()
+            if(q.position<=len(records)+1):
+                listq=[q.title,q.text,q.position,q.img]
+                for j in range(len(records),q.position-1,-1):
+                    cur.execute("Update Question set Position=" +str(j+1)+ " where Position="+str(j))
+                insertion=cur.execute("insert into Question(Title,Description,Position,Image) values(?,?,?,?)",listq)
+                cur.execute("Select * from Question where Position="+str(q.position))
+                row=cur.fetchone()
+                for i in range(0,len(q.ans)):
+                    
+                    lista=[row[0],q.ans[i]["text"],str(q.ans[i]["isCorrect"]),i+1]
+                    insertion=cur.execute("insert into PossibleAnswers(QuestionID,text,isCorrect,Position) values(?,?,?,?)",lista)
+                cur.execute("commit")
+        except:
+            cur.rollback()
+        db_connection.close()
     
 
 def updatedb(pos,q):
     db_connection = sqlite3.connect("DBQuiz.db")
     db_connection.isolation_level = None
     cur = db_connection.cursor()
-    cur.execute("begin")
-    cur.execute("Select * from Question where Position="+str(pos))
-    row=cur.fetchone()
-    if(row==None):
-        return 404
-    if(pos<q.position):
-        for i in range(pos+1,q.position+1):
-            cur.execute("Update Question set Position=" +str(i-1)+ " where Position="+str(i))
-    if(pos>q.position):
-        for i in range(pos-1,q.position-1,-1):
-            cur.execute("Update Question set Position=" +str(i+1)+ " where Position="+str(i))
+    try:
+        cur.execute("begin")
+        cur.execute("Select * from Question where Position="+str(pos))
+        row=cur.fetchone()
+        if(row==None):
+            return 404
+        if(pos<q.position):
+            for i in range(pos+1,q.position+1):
+                cur.execute("Update Question set Position=" +str(i-1)+ " where Position="+str(i))
+        if(pos>q.position):
+            for i in range(pos-1,q.position-1,-1):
+                cur.execute("Update Question set Position=" +str(i+1)+ " where Position="+str(i))
 
-    cur.execute("update Question set Title=\""+q.title+"\",Description=\""+q.text+"\", Position=\""+str(q.position)+"\",Image=\""+q.img+"\" where ID="+str(row[0]) )
-    cur.execute("Delete from PossibleAnswers where QuestionID = " +str(row[0]))
-    for i in range(0,len(q.ans)):
-        lista=[row[0],q.ans[i]["text"],str(q.ans[i]["isCorrect"]),i+1]
-        insertion=cur.execute("insert into PossibleAnswers(QuestionID,text,isCorrect,Position) values(?,?,?,?)",lista)
-    cur.execute("commit")
+        cur.execute("update Question set Title=\""+q.title+"\",Description=\""+q.text+"\", Position=\""+str(q.position)+"\",Image=\""+q.img+"\" where ID="+str(row[0]) )
+        cur.execute("Delete from PossibleAnswers where QuestionID = " +str(row[0]))
+        for i in range(0,len(q.ans)):
+            lista=[row[0],q.ans[i]["text"],str(q.ans[i]["isCorrect"]),i+1]
+            insertion=cur.execute("insert into PossibleAnswers(QuestionID,text,isCorrect,Position) values(?,?,?,?)",lista)
+        cur.execute("commit")
+    except:
+        cur.rollback()
+    db_connection.close()
             
 def deletefromdb(pos):
     db_connection = sqlite3.connect("DBQuiz.db")
@@ -71,25 +79,35 @@ def deletefromdb(pos):
     row=cur.fetchone()
     if(row==None):
         return 404
-    cur.execute("Select * from Question ORDER BY Position")
-    records= cur.fetchall()
-    for j in range(pos+1, len(records)+1):
-        cur.execute("Update Question set Position=" +str(j-1)+ " where Position="+str(j))
-    cur.execute("Delete from PossibleAnswers where QuestionID = " +str(row[0]))
-    cur.execute("Delete from Question where ID =" + str(row[0]))
-    cur.execute("commit")
-    return 204
+    try:
+        cur.execute("Select * from Question ORDER BY Position")
+        records= cur.fetchall()
+        for j in range(pos+1, len(records)+1):
+            cur.execute("Update Question set Position=" +str(j-1)+ " where Position="+str(j))
+        cur.execute("Delete from PossibleAnswers where QuestionID = " +str(row[0]))
+        cur.execute("Delete from Question where ID =" + str(row[0]))
+        cur.execute("commit")
+        return 204
+    except:
+        cur.rollback()
+    db_connection.close()
+    return 500
 
 
 def cleardb():
     db_connection = sqlite3.connect("DBQuiz.db")
     db_connection.isolation_level = None
-    cur = db_connection.cursor()
-    cur.execute("begin")
-    cur.execute("Delete from PossibleAnswers")
-    cur.execute("Delete from Question")
-    cur.execute("commit")
-    return 204
+    try:
+        cur = db_connection.cursor()
+        cur.execute("begin")
+        cur.execute("Delete from PossibleAnswers")
+        cur.execute("Delete from Question")
+        cur.execute("commit")
+        return 204
+    except:
+        cur.rollback()
+    db_connection.close()
+    return 500
 
 def getquest(pos):
     db_connection = sqlite3.connect("DBQuiz.db")
@@ -126,17 +144,3 @@ def sizeDB():
     cur.execute("Select Count(*) from Question")
     row=cur.fetchone()
     return row[0]
-
-
-
-
-#js={"text":"Quelle est la couleur du cheval blanc d\'Henry IV ?","title":"Dummy Question","image":"falseb64imagecontent","position": 1,"possibleAnswers": [{"text": "Noir","isCorrect": 'false'},{"text": "Gris","isCorrect": 'false'},{"text": "Blanc","isCorrect": 'true'},{"text": "La réponse D","isCorrect": 'false'}]}
-
- 
-#qest = fromjson(js)
-#print(sizeDB())
-#qest.addtodb()
-#updatedb(10,qest)
-#cleardb()
-#print(getquest(1))
-#print(getquest(2))
