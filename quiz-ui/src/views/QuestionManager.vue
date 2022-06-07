@@ -2,7 +2,6 @@
 import quizApiService from "@/services/QuizApiService";
 import participationStorageService from "@/services/ParticipationStorageService";
 import QuestionDisplay from "./QuestionDisplay.vue";
-var currentQuestionPosition;
 var answers_list;
 export default {
   data() {
@@ -10,25 +9,24 @@ export default {
       currentQuestion: {
         questionTitle: '',
         questionText: '',
-        possibleAnswers: [],
+        possibleAnswers: [{text:''},{text:''},{text:''},{text:''}],
         image: ''
       },
-      currentQuestionPosition: 1
+      currentQuestionPosition: 0
     };
   },
   components: {
     QuestionDisplay
   },
   async created() {
-    currentQuestionPosition = 0;
     answers_list = [];
     await this.loadQuestionByPosition();
 
   },
   methods: {
     async loadQuestionByPosition() {
-      currentQuestionPosition++;
-      const q1 = await quizApiService.getQuestion(currentQuestionPosition );
+      this.currentQuestionPosition++;
+      const q1 = await quizApiService.getQuestion(this.currentQuestionPosition );
       this.currentQuestion.questionTitle = q1.data.title,
         this.currentQuestion.questionText = q1.data.text,
         this.currentQuestion.possibleAnswers = q1.data.possibleAnswers,
@@ -37,14 +35,13 @@ export default {
     },
     async answerClickHandler(number) {
       answers_list.push(number);
-      if (currentQuestionPosition <10) {
+      if (this.currentQuestionPosition <10) {
           this.loadQuestionByPosition();}
       else{
           this.endQuiz();
       }
-      
-      
     },
+    
     async endQuiz() {
       const name=participationStorageService.getPlayerName()
       var dictjs={
@@ -62,7 +59,7 @@ export default {
 
 <template>
   <br><br><br>
-  <h2 class="question_number">Question {{ currentQuestionPosition }} / {{ 10 }}</h2>
+  <h2 class="question_number">Question {{ this.currentQuestionPosition }} / 10</h2>
   <QuestionDisplay :question="currentQuestion"
   @answer-question="answerClickHandler" 
  />
