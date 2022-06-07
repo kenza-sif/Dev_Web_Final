@@ -5,12 +5,12 @@ import image from  "../assets/homepage-img.png"
 
 
 <template>
+<error-boundary>
   <div id="body-home">
     <div id="homepage">
       <h2>Bienvenue à notre quiz !</h2>
       <br>
       <RouterLink class="RouterLink-home" to="/start-new-quiz-page">Démarrer le quiz !</RouterLink>
-      <RouterLink class="RouterLink-home" to="/Score">Score</RouterLink>
       <div v-for="scoreEntry in registeredScores.slice(0,3)" v-bind:key="scoreEntry.score" class="tableau" >
         {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
       </div>
@@ -19,6 +19,7 @@ import image from  "../assets/homepage-img.png"
       <img v-bind:src="image">
     </div>
   </div>
+</error-boundary>
 </template>
 
 
