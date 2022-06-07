@@ -7,14 +7,12 @@ export default {
     window.localStorage.setItem("playerName", playerName);
   },
   getPlayerName() {
-    window.localStorage.getItem("playerName", playerName);
-    return;
+    return window.localStorage.getItem("playerName");
   },
   saveParticipationScore(participationScore) {
     window.localStorage.setItem("participationScore", participationScore);
   },
   getParticipationScore() {
-    window.localStorage.getItem("participationScore", participationScore);
-    return;
+    return window.localStorage.getItem("participationScore");
   }
 };

@@ -7,11 +7,12 @@ import podium from  "../assets/podium.jpg"
 <template>
   <div id="scorebody">
     <div id="scorepage">
-      <h3>Vous avez gagné 10 points !</h3>
+      <h3>Bravo {{username}} !</h3>
+      <h3>Vous avez gagné {{score}} points !</h3>
       <h3>Votre dernier classement était : N° 2</h3>
       <br> 
       <h3>Le Classement :</h3>
-      <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.score" class="classement" >
+      <div v-for="scoreEntry in registeredScores.slice(0,10)" v-bind:key="scoreEntry.score" class="classement" >
         {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
       </div>
     </div>
@@ -22,6 +23,28 @@ import podium from  "../assets/podium.jpg"
     </div>
   </div>
 </template>
+
+
+<script>
+import quizApiService from "@/services/QuizApiService";
+import participationStorageService from "@/services/ParticipationStorageService";
+
+export default {
+  name: "scorepage",
+  data() {
+    return {
+      registeredScores: [],
+      username : participationStorageService.getPlayerName(),
+      score : participationStorageService.getParticipationScore(),
+    };
+  },
+  async created() {
+    const test = await quizApiService.getQuizInfo();
+    this.registeredScores = test.data.scores
+    console.log(this.registeredScores);
+  }
+};
+</script>
 
 
 <style>
@@ -65,25 +88,3 @@ import podium from  "../assets/podium.jpg"
     font-size : 2.5rem;
   }
 </style>
-
-
-<script>
-import quizApiService from "@/services/QuizApiService";
-
-export default {
-  name: "scorepage",
-  data() {
-    return {
-      registeredScores: []
-    };
-  },
-  async created() {
-    const test = await quizApiService.getQuizInfo();
-    this.registeredScores = test.data.scores
-    console.log(this.registeredScores);
-  }
-};
-</script>
-
-
-
