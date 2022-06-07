@@ -32,5 +32,8 @@ export default {
   },
   getQuestion(position) {
     return this.call("get", "/questions/" + position);
+  },
+  AddParticipation(parti){
+    return this.call("POST","participations",parti)
   }
 };

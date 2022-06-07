@@ -8,11 +8,11 @@
       <img v-if="question.image" :src="question.image" alt=""  />
     </div>
     <div >
-      <button class="answer_button" type="button" @click="launchNewQuiz">{{ question.possibleAnswers[0].text }}</button>
-      <button class="answer_button" type="button" @click="launchNewQuiz">{{ question.possibleAnswers[1].text }}</button>
+      <button class="answer_button" type="button" @click="$emit('answer-question',1)">{{ question.possibleAnswers[0].text }}</button>
+      <button class="answer_button" type="button" @click="$emit('answer-question',2)">{{ question.possibleAnswers[1].text }}</button>
       <br>
-      <button class="answer_button" type="button" @click="launchNewQuiz">{{ question.possibleAnswers[2].text }}</button>
-      <button class="answer_button" type="button" @click="launchNewQuiz">{{ question.possibleAnswers[3].text }}</button>
+      <button class="answer_button" type="button" @click="$emit('answer-question',3)">{{ question.possibleAnswers[2].text }}</button>
+      <button class="answer_button" type="button" @click="$emit('answer-question',4)">{{ question.possibleAnswers[3].text }}</button>
     </div>
   </div>
 </div>
@@ -27,6 +27,7 @@ export default {
       type: Object
     }
   },
+  emits: ['answer-question']
 }
 </script>
 
