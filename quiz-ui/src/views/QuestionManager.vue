@@ -48,7 +48,8 @@ export default {
           "playerName": name,
           "answers": answers_list
       };
-      await quizApiService.AddParticipation(dictjs);
+      const resultquizz = await quizApiService.AddParticipation(dictjs);
+      participationStorageService.saveParticipationScore(resultquizz.data.score);
       this.$router.push('/Score');
     }
   }
