@@ -22,5 +22,6 @@
   height: 100%;
   width: 100%;
   text-align: center;
+  color: black
 }
 </style>

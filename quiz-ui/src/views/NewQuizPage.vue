@@ -33,6 +33,7 @@ export default {
 <style>
 .saisir_nom{
   font-size : 1.8rem;
+  color: black
 }
 .inputbox,.go_button{
   font-size : 1.5rem;

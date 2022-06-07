@@ -125,4 +125,5 @@ nav a:first-of-type {
   right: 0px;
   top: 0px;
 }
+body {background-color: white;}
 </style>
