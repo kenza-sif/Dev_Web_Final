@@ -1,4 +1,5 @@
 import json
+from select import select
 import sqlite3
 
 class Participation:
@@ -6,10 +7,11 @@ class Participation:
         self.name=name
         self.answers=answers
     
-    def getResult(self):
+    def getResult(self,rank):
         x={
             "playerName": self.name,
-            "score":self.score
+            "score":self.score,
+            "ranking": rank
         }
         return json.dumps(x)
     
@@ -35,7 +37,11 @@ class Participation:
             listP=[self.name,self.score]
             insertion=cur.execute("insert into Participations(Name,Score) values(?,?)",listP)
             cur.execute("commit")   
-            return self.getResult()
+            cur.execute("select ID from Participations ORDER BY id DESC LIMIT 1")
+            tempid = cur.fetchone()
+            cur.execute("Select RowNum From( SELECT ROW_NUMBER () OVER ( ORDER BY Score DESC ) RowNum,ID from Participations) where ID=" +str(tempid[0]))
+            ranking = cur.fetchone()
+            return self.getResult(ranking[0])
         except:
             cur.rollback()
         db_connection.close()

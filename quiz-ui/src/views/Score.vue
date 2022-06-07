@@ -9,7 +9,7 @@ import podium from  "../assets/podium.jpg"
     <div id="scorepage">
       <h3>Bravo {{username}} !</h3>
       <h3>Vous avez gagné {{score}} points !</h3>
-      <h3>Votre dernier classement était : N° 2</h3>
+      <h3>Votre dernier classement était : N° {{rank}}</h3>
       <br> 
       <h3>Le Classement :</h3>
       <div v-for="scoreEntry in registeredScores.slice(0,10)" v-bind:key="scoreEntry.score" class="classement" >
@@ -36,6 +36,7 @@ export default {
       registeredScores: [],
       username : participationStorageService.getPlayerName(),
       score : participationStorageService.getParticipationScore(),
+      rank : participationStorageService.getParticipationRank(),
     };
   },
   async created() {

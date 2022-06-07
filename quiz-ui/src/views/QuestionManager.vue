@@ -50,6 +50,7 @@ export default {
       };
       const resultquizz = await quizApiService.AddParticipation(dictjs);
       participationStorageService.saveParticipationScore(resultquizz.data.score);
+      participationStorageService.saveParticipationRank(resultquizz.data.ranking);
       this.$router.push('/Score');
     }
   }
